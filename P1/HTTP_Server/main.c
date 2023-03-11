@@ -39,6 +39,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "ledsSTM32F429.h"
+#include "LCD_STM32F429.h"
 
 #ifdef RTE_CMSIS_RTOS2_RTX5
 /**
@@ -78,7 +80,7 @@ uint32_t HAL_GetTick (void) {
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
-
+extern char lcd_text[2][20+1];
 /* Private functions ---------------------------------------------------------*/
 /**
   * @brief  Main program
@@ -87,6 +89,7 @@ static void Error_Handler(void);
   */
 int main(void)
 {
+int i;
 
   /* STM32F4xx HAL library initialization:
        - Configure the Flash prefetch, Flash preread and Buffer caches
@@ -98,7 +101,36 @@ int main(void)
        - Low Level Initialization
      */
   HAL_Init();
-
+	LED_Initialize();
+  init_SPI();
+	reset_lcd();
+	init_LCD();
+	borrarBuffer();
+	
+	sprintf (lcd_text[0], "Linea 1");
+  sprintf (lcd_text[1], "Linea 2");
+	for(i=0; lcd_text[0][i]!= 0x00; i++){
+          EscribeLetra_L1(lcd_text[0][i]);
+  }
+	for(i=0; lcd_text[1][i]!= 0x00; i++){
+          EscribeLetra_L2(lcd_text[1][i]);
+  }
+	LCD_update();
+	osDelay(20000);
+	empezar();
+	borrarBuffer();
+	sprintf (lcd_text[0], "Hola");
+  sprintf (lcd_text[1], "Buenos dias");
+	for(i=0; lcd_text[0][i]!= 0x00; i++){
+          EscribeLetra_L1(lcd_text[0][i]);
+  }
+	for(i=0; lcd_text[1][i]!= 0x00; i++){
+          EscribeLetra_L2(lcd_text[1][i]);
+  }
+	LCD_update();
+	
+	
+	//osDelay(250);
   /* Configure the system clock to 168 MHz */
   SystemClock_Config();
   SystemCoreClockUpdate();
@@ -118,9 +150,10 @@ int main(void)
 #endif
 
   /* Infinite loop */
-  while (1)
-  {
+  while (1){
+
   }
+	
 }
 
 /**

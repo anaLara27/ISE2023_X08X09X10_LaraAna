@@ -24,7 +24,7 @@
 //extern uint8_t  get_button (void);
 
 extern bool LEDrun;
-extern char lcd_text[2][20+1];
+char lcd_text[2][20+1];
 extern osThreadId_t TID_Display;
 
 // Local variables.

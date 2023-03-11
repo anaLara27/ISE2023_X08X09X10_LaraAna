@@ -1,5 +1,5 @@
 #include "LCD_STM32F429.h"
-
+#include "Arial12x12.h"
 //Variables del SPI Driver
  extern ARM_DRIVER_SPI Driver_SPI1;
  ARM_DRIVER_SPI* SPIdrv = &Driver_SPI1;
@@ -83,7 +83,15 @@
 	//LCD display normal
 	LCD_wr_cmd(0xA6); 
  }
- 
+ void reset_lcd(void){
+  delay(2); // Esperamos dos microsegundos
+  //Apagamos el lcd
+  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_6,GPIO_PIN_RESET);//RESET
+  delay(1000);
+	//Encendemos el lcd
+  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_6,GPIO_PIN_SET);//RESET
+
+}
  /*Función para escribir un dato en el LCD*/
  void LCD_wr_data(unsigned char data){
 	 ARM_SPI_STATUS stat;
@@ -123,3 +131,104 @@
 		HAL_GPIO_WritePin(GPIOD,GPIO_PIN_14,GPIO_PIN_SET);//CS
  }
  
+ /*Función para copiar la información delbuffer en el LCD*/
+void LCD_update(void){
+	int i;
+	
+	 LCD_wr_cmd(0x00); // 4 bits de la parte baja de la dirección a 0
+	 LCD_wr_cmd(0x10); // 4 bits de la parte alta de la dirección a 0
+	 LCD_wr_cmd(0xB0); // Página 0
+
+		for(i=0;i<128;i++){
+			LCD_wr_data(buffer[i]);
+		}
+
+	 LCD_wr_cmd(0x00); // 4 bits de la parte baja de la dirección a 0
+	 LCD_wr_cmd(0x10); // 4 bits de la parte alta de la dirección a 0
+	 LCD_wr_cmd(0xB1); // Página 1
+
+	 for(i=128;i<256;i++){
+			LCD_wr_data(buffer[i]);
+	 }
+
+	 LCD_wr_cmd(0x00);
+	 LCD_wr_cmd(0x10);
+	 LCD_wr_cmd(0xB2); //Página 2
+	 for(i=256;i<384;i++){
+			LCD_wr_data(buffer[i]);
+	 }
+
+	 LCD_wr_cmd(0x00);
+	 LCD_wr_cmd(0x10);
+	 LCD_wr_cmd(0xB3); // Pagina 3
+
+
+	 for(i=384;i<512;i++){
+			LCD_wr_data(buffer[i]);
+	 }
+}
+
+void EscribeLetra_L1(uint8_t letra){
+ uint8_t i, valor1, valor2 = 0;
+ uint16_t comienzo = 0;
+	
+  //Linea1
+  comienzo = 25 * (letra - ' '); //Avanza a la linea donde se encuentra la letra que quiero representar
+	// todas las letras de arial 12x12 ocupan 25 bytes (1 columna = 1 byte)
+  
+  for (i = 0; i<12; i++){ //Vamos a escribir las 12 primeras columnas de la letra
+   
+     valor1 = Arial12x12 [comienzo+i*2+1]; // valor1= arial[1,3,5,7,9,....]
+     valor2 = Arial12x12 [comienzo+i*2+2]; // valor2= arial[2,4,6,8,10,....]
+
+     buffer [i+posicionL1] = valor1; //pagina 0 escribimos los valores impares de arial
+     buffer [i+128 +posicionL1] = valor2; //pagina 1 escribimos los valores pares de arial
+   
+  }
+  
+  posicionL1 = posicionL1 + Arial12x12 [comienzo]; // posicionL1 indica la columna donde se debe comenza a escribir  
+}
+
+  void EscribeLetra_L2(uint8_t letra){
+ 
+      uint8_t i, valor1, valor2 = 0;
+      uint16_t comienzo = 0;
+      //Linea 2
+    comienzo = 25 * (letra - ' '); //Avanza a la linea donde se encuentra la letra que quiero representar
+	// todas las letras de arial 12x12 ocupan 25 bytes (1 columna = 1 byte)
+  
+  for (i = 0; i<12; i++){ //Vamos a escribir las 12 primeras columnas de la letra
+   
+     valor1 = Arial12x12 [comienzo+i*2+1]; // valor1= arial[1,3,5,7,9,....]
+     valor2 = Arial12x12 [comienzo+i*2+2]; // valor2= arial[2,4,6,8,10,....]
+
+     buffer [i+posicionL2] = valor1; //pagina 0 escribimos los valores impares de arial
+     buffer [i+128 +posicionL2] = valor2; //pagina 1 escribimos los valores pares de arial
+   
+  }
+  
+  posicionL2 = posicionL2 + Arial12x12 [comienzo]; // posicionL1 indica la columna donde se debe comenza a escribir
+  }
+	
+	void EscribeLetra_LCD(uint8_t linea, uint8_t letra){
+		if(linea == 1){
+			EscribeLetra_L1(letra);
+		}else if (linea == 2){
+			EscribeLetra_L2(letra);
+		}		
+	}
+	
+
+	//Limpiar LCD
+void borrarBuffer(void){
+//	memset(buffer,0,512);
+	int i;
+	for( i=0;i<512;i++){
+		buffer[i]=0;
+	}
+	LCD_update();
+}
+void empezar(void){
+	posicionL1=0;
+	posicionL2=256;
+}

@@ -41,8 +41,7 @@ extern osThreadId_t TID_Display;
 extern osThreadId_t TID_Led;
 
 bool LEDrun;
-char lcd_text[2][20+1] = { "LCD line 1",
-                           "LCD line 2" };
+
 
 /* Thread IDs */
 osThreadId_t TID_Display;
@@ -165,7 +164,7 @@ static __NO_RETURN void BlinkLed (void *arg) {
 __NO_RETURN void app_main (void *arg) {
   (void)arg;
 
-  LED_Initialize();
+  
 //  Buttons_Initialize();
 //  ADC_Initialize();
 
