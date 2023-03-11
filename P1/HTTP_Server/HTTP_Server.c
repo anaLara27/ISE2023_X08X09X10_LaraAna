@@ -14,10 +14,7 @@
 
 #include "stm32f4xx_hal.h"              // Keil::Device:STM32Cube HAL:Common
 #include "ledsSTM32F429.h"                  // ::Board Support:LED
-#include "Board_Buttons.h"              // ::Board Support:Buttons
-#include "Board_ADC.h"                  // ::Board Support:A/D Converter
-#include "Board_GLCD.h"                 // ::Board Support:Graphic LCD
-//#include "GLCD_Config.h"                // Keil.MCBSTM32F400::Board Support:Graphic LCD
+#include "LCD_STM32F429.h"
 
 // Main stack size must be multiple of 8 Bytes
 #define APP_MAIN_STK_SZ (1024U)
@@ -27,8 +24,6 @@ const osThreadAttr_t app_main_attr = {
   .stack_size = sizeof(app_main_stk)
 };
 
-//extern GLCD_FONT GLCD_Font_6x8;
-//extern GLCD_FONT GLCD_Font_16x24;
 
 //extern uint16_t AD_in          (uint32_t ch);
 //extern uint8_t  get_button     (void);
@@ -49,9 +44,9 @@ osThreadId_t TID_Led;
 
 /* Thread declarations */
 static void BlinkLed (void *arg);
-//static void Display  (void *arg);
+static void Display  (void *arg);
 
-//__NO_RETURN void app_main (void *arg);
+__NO_RETURN void app_main (void *arg);
 
 ///* Read analog inputs */
 //uint16_t AD_in (uint32_t ch) {
@@ -86,55 +81,23 @@ static void BlinkLed (void *arg);
 /*----------------------------------------------------------------------------
   Thread 'Display': LCD display handler
  *---------------------------------------------------------------------------*/
-//static __NO_RETURN void Display (void *arg) {
-//  static uint8_t ip_addr[NET_ADDR_IP6_LEN];
-//  static char    ip_ascii[40];
-//  static char    buf[24];
-//  uint32_t x = 0;
+static __NO_RETURN void Display (void *arg) {
+int i;
+	//static char    buf[24];
+  while(1) {
+		osThreadFlagsWait (0x01U, osFlagsWaitAny, osWaitForever);
+		empezar();
+		borrarBuffer();
 
-//  (void)arg;
-
-//  GLCD_Initialize         ();
-//  //GLCD_SetBackgroundColor (GLCD_COLOR_BLUE);
-//  //GLCD_SetForegroundColor (GLCD_COLOR_WHITE);
-//  GLCD_ClearScreen        ();
-//  GLCD_SetFont            (&GLCD_Font_16x24);
-//  GLCD_DrawString         (x*16U, 1U*24U, "       MDK-MW       ");
-//  GLCD_DrawString         (x*16U, 2U*24U, "HTTP Server example ");
-
-//  GLCD_DrawString (x*16U, 4U*24U, "IP4:Waiting for DHCP");
-
-//  /* Print Link-local IPv6 address */
-//  netIF_GetOption (NET_IF_CLASS_ETH,
-//                   netIF_OptionIP6_LinkLocalAddress, ip_addr, sizeof(ip_addr));
-
-//  netIP_ntoa(NET_ADDR_IP6, ip_addr, ip_ascii, sizeof(ip_ascii));
-
-//  sprintf (buf, "IP6:%.16s", ip_ascii);
-//  GLCD_DrawString ( x    *16U, 5U*24U, buf);
-//  sprintf (buf, "%s", ip_ascii+16);
-//  GLCD_DrawString ((x+10U)*16U, 6U*24U, buf);
-
-//  while(1) {
-//    /* Wait for signal from DHCP */
-//    osThreadFlagsWait (0x01U, osFlagsWaitAny, osWaitForever);
-
-//    /* Retrieve and print IPv4 address */
-//    netIF_GetOption (NET_IF_CLASS_ETH,
-//                     netIF_OptionIP4_Address, ip_addr, sizeof(ip_addr));
-
-//    netIP_ntoa (NET_ADDR_IP4, ip_addr, ip_ascii, sizeof(ip_ascii));
-
-//    sprintf (buf, "IP4:%-16s",ip_ascii);
-//    GLCD_DrawString (x*16U, 4U*24U, buf);
-
-//    /* Display user text lines */
-//    sprintf (buf, "%-20s", lcd_text[0]);
-//    GLCD_DrawString (x*16U, 7U*24U, buf);
-//    sprintf (buf, "%-20s", lcd_text[1]);
-//    GLCD_DrawString (x*16U, 8U*24U, buf);
-//  }
-//}
+		for(i=0; lcd_text[0][i]!= 0x00; i++){
+						EscribeLetra_L1(lcd_text[0][i]);
+		}
+		for(i=0; lcd_text[1][i]!= 0x00; i++){
+						EscribeLetra_L2(lcd_text[1][i]);
+		}
+		LCD_update();
+	}
+}
 
 /*----------------------------------------------------------------------------
   Thread 'BlinkLed': Blink the LEDs on an eval board
@@ -171,7 +134,7 @@ __NO_RETURN void app_main (void *arg) {
   netInitialize ();
 
   TID_Led     = osThreadNew (BlinkLed, NULL, NULL);
-//  TID_Display = osThreadNew (Display,  NULL, NULL);
+  TID_Display = osThreadNew (Display,  NULL, NULL);
 	LED_On(0);
 	LED_On(1);
 	LED_On(2);

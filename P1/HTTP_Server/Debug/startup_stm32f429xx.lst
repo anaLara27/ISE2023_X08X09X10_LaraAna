@@ -873,23 +873,23 @@ ARM Macro Assembler    Page 14
   448 0000001C                 END
               00000000 
               00000000 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp.sp --apcs=
-interwork --depend=.\debug\startup_stm32f429xx.d -o.\debug\startup_stm32f429xx.
-o -I.\RTE\CMSIS -I.\RTE\Compiler -I.\RTE\Device\STM32F429ZITx -I.\RTE\Network -
-I.\RTE\_Debug -IC:\Users\anald\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Co
-re\Include -IC:\Users\anald\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Drive
-r\Include -IC:\Users\anald\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\
-Include -IC:\Users\anald\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RT
-X\Include -IC:\Users\anald\AppData\Local\Arm\Packs\Keil\ARM_Compiler\1.6.3\Incl
-ude -IC:\Users\anald\AppData\Local\Arm\Packs\Keil\MDK-Middleware\7.12.0\Board -
-IC:\Users\anald\AppData\Local\Arm\Packs\Keil\MDK-Middleware\7.12.0\Network\Incl
-ude -IC:\Users\anald\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\
-CMSIS\Device\ST\STM32F4xx\Include -IC:\Users\anald\AppData\Local\Arm\Packs\Keil
-\STM32F4xx_DFP\2.15.0\Drivers\STM32F4xx_HAL_Driver\Inc --predefine="__RTX SETA 
-1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 534" --p
-redefine="_RTE_ SETA 1" --predefine="STM32F429xx SETA 1" --predefine="_RTE_ SET
-A 1" --list=.\debug\startup_stm32f429xx.lst RTE\Device\STM32F429ZITx\startup_st
-m32f429xx.s
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4 --apcs=interw
+ork --depend=.\debug\startup_stm32f429xx.d -o.\debug\startup_stm32f429xx.o -I.\
+RTE\CMSIS -I.\RTE\Compiler -I.\RTE\Device\STM32F429ZITx -I.\RTE\Network -I.\RTE
+\_Debug -IC:\Users\anald\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Core\Inc
+lude -IC:\Users\anald\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\Driver\Incl
+ude -IC:\Users\anald\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\Includ
+e -IC:\Users\anald\AppData\Local\Arm\Packs\ARM\CMSIS\5.8.0\CMSIS\RTOS2\RTX\Incl
+ude -IC:\Users\anald\AppData\Local\Arm\Packs\Keil\ARM_Compiler\1.6.3\Include -I
+C:\Users\anald\AppData\Local\Arm\Packs\Keil\MDK-Middleware\7.12.0\Board -IC:\Us
+ers\anald\AppData\Local\Arm\Packs\Keil\MDK-Middleware\7.12.0\Network\Include -I
+C:\Users\anald\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\
+Device\ST\STM32F4xx\Include -IC:\Users\anald\AppData\Local\Arm\Packs\Keil\STM32
+F4xx_DFP\2.15.0\Drivers\STM32F4xx_HAL_Driver\Inc --predefine="__RTX SETA 1" --p
+redefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 534" --predefi
+ne="_RTE_ SETA 1" --predefine="STM32F429xx SETA 1" --predefine="_RTE_ SETA 1" -
+-list=.\debug\startup_stm32f429xx.lst RTE\Device\STM32F429ZITx\startup_stm32f42
+9xx.s
 
 
 
@@ -2061,4 +2061,4 @@ Symbol: __main
       At line 185 in file RTE\Device\STM32F429ZITx\startup_stm32f429xx.s
 Comment: __main used once
 2 symbols
-455 symbols in table
+454 symbols in table

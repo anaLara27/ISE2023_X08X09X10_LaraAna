@@ -41,6 +41,7 @@
 #include "main.h"
 #include "ledsSTM32F429.h"
 #include "LCD_STM32F429.h"
+#include "cmsis_os2.h" 
 
 #ifdef RTE_CMSIS_RTOS2_RTX5
 /**
@@ -116,19 +117,7 @@ int i;
           EscribeLetra_L2(lcd_text[1][i]);
   }
 	LCD_update();
-	osDelay(20000);
-	empezar();
-	borrarBuffer();
-	sprintf (lcd_text[0], "Hola");
-  sprintf (lcd_text[1], "Buenos dias");
-	for(i=0; lcd_text[0][i]!= 0x00; i++){
-          EscribeLetra_L1(lcd_text[0][i]);
-  }
-	for(i=0; lcd_text[1][i]!= 0x00; i++){
-          EscribeLetra_L2(lcd_text[1][i]);
-  }
-	LCD_update();
-	
+	osDelay(200);
 	
 	//osDelay(250);
   /* Configure the system clock to 168 MHz */
