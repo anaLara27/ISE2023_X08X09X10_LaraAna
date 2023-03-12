@@ -438,6 +438,16 @@
               <FileType>5</FileType>
               <FilePath>.\Arial12x12.h</FilePath>
             </File>
+            <File>
+              <FileName>ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ADC.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1002,6 +1012,16 @@
               <FileType>5</FileType>
               <FilePath>.\Arial12x12.h</FilePath>
             </File>
+            <File>
+              <FileName>ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ADC.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1207,8 +1227,8 @@
 
   <RTE>
     <apis>
-      <api Capiversion="1.00" Cclass="Board Support" Cgroup="Buttons" exclusive="0">
-        <package name="MDK-Middleware" schemaVersion="1.0" url="http://www.keil.com/pack/" vendor="Keil" version="6.1.0"/>
+      <api Capiversion="1.0.0" Cclass="Board Support" Cgroup="A/D Converter" exclusive="0">
+        <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.12.0"/>
         <targetInfos>
           <targetInfo name="Debug"/>
           <targetInfo name="Release"/>
@@ -1280,6 +1300,13 @@
           </targetInfo>
         </targetInfos>
       </component>
+      <component Capiversion="1.0.0" Cbundle="MCBSTM32F400" Cclass="Board Support" Cgroup="A/D Converter" Cvendor="Keil" Cversion="2.0.0" condition="STM32F4 HAL GPIO ADC">
+        <package name="STM32F4xx_DFP" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="2.15.0"/>
+        <targetInfos>
+          <targetInfo name="Debug"/>
+          <targetInfo name="Release"/>
+        </targetInfos>
+      </component>
       <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="CORE" Cvariant="IPv4/IPv6 Debug" Cvendor="Keil" Cversion="7.14.0" condition="CMSIS Core with RTOS and Event Recorder">
         <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.12.0"/>
         <targetInfos>
@@ -1315,13 +1342,6 @@
       </component>
       <component Cbundle="MDK-Pro" Cclass="Network" Cgroup="Socket" Csub="UDP" Cvendor="Keil" Cversion="7.14.0" condition="Network Interface">
         <package name="MDK-Middleware" schemaVersion="1.4" url="http://www.keil.com/pack/" vendor="Keil" version="7.12.0"/>
-        <targetInfos>
-          <targetInfo name="Debug"/>
-          <targetInfo name="Release"/>
-        </targetInfos>
-      </component>
-      <component Capiversion="1.0.0" Cbundle="STM32F429I-Discovery" Cclass="Board Support" Cgroup="Buttons" Cvendor="Keil" Cversion="1.0.0" condition="STM32F4 HAL GPIO">
-        <package name="STM32F4xx_DFP" schemaVersion="1.6.3" url="http://www.keil.com/pack/" vendor="Keil" version="2.15.0"/>
         <targetInfos>
           <targetInfo name="Debug"/>
           <targetInfo name="Release"/>
