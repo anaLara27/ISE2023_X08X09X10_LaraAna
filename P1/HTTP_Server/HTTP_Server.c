@@ -15,7 +15,8 @@
 #include "stm32f4xx_hal.h"              // Keil::Device:STM32Cube HAL:Common
 #include "ledsSTM32F429.h"                  // ::Board Support:LED
 #include "LCD_STM32F429.h"
-
+#include "ADC.h"
+int32_t val = 0;
 // Main stack size must be multiple of 8 Bytes
 #define APP_MAIN_STK_SZ (1024U)
 uint64_t app_main_stk[APP_MAIN_STK_SZ / 8];
@@ -48,17 +49,15 @@ static void Display  (void *arg);
 
 __NO_RETURN void app_main (void *arg);
 
-///* Read analog inputs */
-//uint16_t AD_in (uint32_t ch) {
-//  int32_t val = 0;
-
-//  if (ch == 0) {
-//    ADC_StartConversion();
-//    //while (ADC_ConversionDone () < 0);
-//    val = ADC_GetValue();
-//  }
-//  return ((uint16_t)val);
-//}
+/* Read analog inputs */
+uint16_t AD_in (uint32_t ch) {
+  if (ch == 0) {
+    ADC_StartConversion();
+    while (ADC_ConversionDone () < 0);
+    val = ADC_GetValue();
+  }
+  return ((uint16_t)val);
+}
 
 
 /*----------------------------------------------------------------------------
@@ -112,7 +111,7 @@ __NO_RETURN void app_main (void *arg) {
 
   
 //  Buttons_Initialize();
-//  ADC_Initialize();
+  
 
   netInitialize ();
 

@@ -12,15 +12,15 @@
 #include "cmsis_os2.h"                  // ::CMSIS:RTOS2
 #include "rl_net.h"                     // Keil.MDK-Pro::Network:CORE
 
-#include "Board_LED.h"                  // ::Board Support:LED
-
+//#include "Board_LED.h"                  // ::Board Support:LED
+#include "ledsSTM32F429.h"
 #if      defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
 #pragma  clang diagnostic push
 #pragma  clang diagnostic ignored "-Wformat-nonliteral"
 #endif
 
 //// http_server.c
-//extern uint16_t AD_in (uint32_t ch);
+extern uint16_t AD_in (uint32_t ch);
 //extern uint8_t  get_button (void);
 
 extern bool LEDrun;
@@ -334,7 +334,7 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       // AD Input from 'ad.cgi'
       switch (env[2]) {
         case '1':
-          //adv = AD_in (0);
+          adv = AD_in (0);
           len = (uint32_t)sprintf (buf, &env[4], adv);
           break;
         case '2':

@@ -42,7 +42,7 @@
 #include "ledsSTM32F429.h"
 #include "LCD_STM32F429.h"
 #include "cmsis_os2.h" 
-
+#include "ADC.h"
 #ifdef RTE_CMSIS_RTOS2_RTX5
 /**
   * Override default HAL_GetTick function
@@ -91,7 +91,7 @@ extern char lcd_text[2][20+1];
 int main(void)
 {
 int i;
-
+//extern uint16_t val;
   /* STM32F4xx HAL library initialization:
        - Configure the Flash prefetch, Flash preread and Buffer caches
        - Systick timer is configured by default as source of time base, but user 
@@ -107,6 +107,7 @@ int i;
 	reset_lcd();
 	init_LCD();
 	borrarBuffer();
+  ADC_Initialize();
 	
 	sprintf (lcd_text[0], "Linea 1");
   sprintf (lcd_text[1], "Linea 2");
