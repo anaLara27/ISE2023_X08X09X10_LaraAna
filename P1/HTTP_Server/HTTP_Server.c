@@ -26,9 +26,7 @@ const osThreadAttr_t app_main_attr = {
 };
 
 
-//extern uint16_t AD_in          (uint32_t ch);
-//extern uint8_t  get_button     (void);
-//extern void     netDHCP_Notify (uint32_t if_num, uint8_t option, const uint8_t *val, uint32_t len);
+extern uint16_t AD_in          (uint32_t ch);
 
 extern bool LEDrun;
 extern char lcd_text[2][20+1];
@@ -53,7 +51,7 @@ __NO_RETURN void app_main (void *arg);
 uint16_t AD_in (uint32_t ch) {
   if (ch == 0) {
     ADC_StartConversion();
-    while (ADC_ConversionDone () < 0);
+    //while (ADC_ConversionDone () < 0);
     val = ADC_GetValue();
   }
   return ((uint16_t)val);
@@ -108,17 +106,10 @@ static __NO_RETURN void BlinkLed (void *arg) {
  *---------------------------------------------------------------------------*/
 __NO_RETURN void app_main (void *arg) {
   (void)arg;
-
-  
-//  Buttons_Initialize();
-  
-
   netInitialize ();
 
   TID_Led     = osThreadNew (BlinkLed, NULL, NULL);
   TID_Display = osThreadNew (Display,  NULL, NULL);
-	LED_On(0);
-	LED_On(1);
-	LED_On(2);
+
   osThreadExit();
 }
