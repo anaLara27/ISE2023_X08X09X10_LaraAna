@@ -96,8 +96,7 @@ extern char lcd_text[2][20+1];
   * @param  None
   * @retval None
   */
-int main(void)
-{
+int main(void){
 int i;
 //extern uint16_t val;
   /* STM32F4xx HAL library initialization:

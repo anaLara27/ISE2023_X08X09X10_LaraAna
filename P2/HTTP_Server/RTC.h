@@ -12,5 +12,7 @@ void init_RTC(void);
  void RTC_CalendarShow(void);
 void HAL_RTC_MspInit(RTC_HandleTypeDef *hrtc);
 void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc);
+void RTC_Alarm_IRQHandler(void);
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc);
 
 #endif

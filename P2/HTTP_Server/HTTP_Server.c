@@ -89,7 +89,7 @@ static __NO_RETURN void BlinkLed (void *arg) {
 
   (void)arg;
 
-  LEDrun = true;
+  LEDrun = false;
   while(1) {
     /* Every 100 ms */
     if (LEDrun == true) {

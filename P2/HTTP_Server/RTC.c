@@ -1,6 +1,7 @@
 #include "RTC.h"
 
 RTC_HandleTypeDef RtcHandle;
+RTC_AlarmTypeDef alarmRTC;
 char fechaRTC[20];
 char horaRTC[20];
 
@@ -24,6 +25,7 @@ void init_RTC(){
   __HAL_RTC_RESET_HANDLE_STATE(&RtcHandle);
 	HAL_RTC_MspInit(&RtcHandle);
 	
+
   if (HAL_RTC_Init(&RtcHandle) != HAL_OK)
   {
     /* Initialization Error */
@@ -57,7 +59,24 @@ void init_RTC(){
     /* Clear source Reset Flag */
     __HAL_RCC_CLEAR_RESET_FLAGS();
   }
-
+		//Configuración de la alarma
+	alarmRTC.AlarmTime.Hours = 0x00;
+  alarmRTC.AlarmTime.Minutes = 0x00;
+  alarmRTC.AlarmTime.Seconds = 0x05;
+  alarmRTC.AlarmTime.SubSeconds = 0x00;
+	alarmRTC.AlarmTime.TimeFormat = RTC_HOURFORMAT_24;
+  alarmRTC.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  alarmRTC.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  alarmRTC.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY|RTC_ALARMMASK_HOURS|RTC_ALARMMASK_MINUTES;
+  alarmRTC.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
+  alarmRTC.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
+  alarmRTC.AlarmDateWeekDay = 0x01;
+  alarmRTC.Alarm = RTC_ALARM_A;
+	HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
+	if(HAL_RTC_SetAlarm_IT(&RtcHandle,&alarmRTC,RTC_FORMAT_BIN)!= HAL_OK){
+	    Error_Handler();
+	}
 }
 
 void Error_Handler(void)
@@ -103,6 +122,8 @@ void RTC_CalendarConfig(void)
 
   /*##-3- Writes a data in a RTC Backup data Register1 #######################*/
   HAL_RTCEx_BKUPWrite(&RtcHandle, RTC_BKP_DR1, 0x32F2);
+	
+
 }
 
 /**
@@ -190,4 +211,16 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc)
   HAL_PWR_DisableBkUpAccess();
   __HAL_RCC_PWR_CLK_DISABLE();
   
+}
+//conrol de interrupciones de la alarma del RTC
+void RTC_Alarm_IRQHandler(void) {
+  HAL_RTC_AlarmIRQHandler(&RtcHandle);
+}
+//callback de la alarma A
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc){
+	for(int i = 0; i<5;i++){
+	  LED_On(0);
+
+		LED_Off(0);
+	}
 }
