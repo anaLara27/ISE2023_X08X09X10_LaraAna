@@ -25,12 +25,15 @@ extern uint16_t AD_in (uint32_t ch);
 
 extern bool LEDrun;
 char lcd_text[2][20+1];
+extern char fechaRTC[20];
+extern char horaRTC[20];
+
 extern osThreadId_t TID_Display;
 
 // Local variables.
 static uint8_t P2;
 static uint8_t ip_addr[NET_ADDR_IP6_LEN];
-static char    ip_string[40];
+//static char    ip_string[40];
 
 // My structure of CGI status variable.
 typedef struct {
@@ -163,70 +166,18 @@ void netCGI_ProcessData (uint8_t code, const char *data, uint32_t len) {
 
 // Generate dynamic web data from a script line.
 uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *pcgi) {
-  int32_t socket;
-  netTCP_State state;
-  NET_ADDR r_client;
-  const char *lang;
+//  int32_t socket;
+//  netTCP_State state;
+//  NET_ADDR r_client;
+//  const char *lang;
   uint32_t len = 0U;
   uint8_t id;
   static uint32_t adv;
-  netIF_Option opt = netIF_OptionMAC_Address;
-  int16_t      typ = 0;
+//  netIF_Option opt = netIF_OptionMAC_Address;
+//  int16_t      typ = 0;
 
   switch (env[0]) {
-    // Analyze a 'c' script line starting position 2
-    case 'a' :
-      // Network parameters from 'network.cgi'
-      switch (env[3]) {
-        case '4': typ = NET_ADDR_IP4; break;
-        case '6': typ = NET_ADDR_IP6; break;
-
-        default: return (0);
-      }
-      
-      switch (env[2]) {
-        case 'l':
-          // Link-local address
-          if (env[3] == '4') { return (0);                             }
-          else               { opt = netIF_OptionIP6_LinkLocalAddress; }
-          break;
-
-        case 'i':
-          // Write local IP address (IPv4 or IPv6)
-          if (env[3] == '4') { opt = netIF_OptionIP4_Address;       }
-          else               { opt = netIF_OptionIP6_StaticAddress; }
-          break;
-
-        case 'm':
-          // Write local network mask
-          if (env[3] == '4') { opt = netIF_OptionIP4_SubnetMask; }
-          else               { return (0);                       }
-          break;
-
-        case 'g':
-          // Write default gateway IP address
-          if (env[3] == '4') { opt = netIF_OptionIP4_DefaultGateway; }
-          else               { opt = netIF_OptionIP6_DefaultGateway; }
-          break;
-
-        case 'p':
-          // Write primary DNS server IP address
-          if (env[3] == '4') { opt = netIF_OptionIP4_PrimaryDNS; }
-          else               { opt = netIF_OptionIP6_PrimaryDNS; }
-          break;
-
-        case 's':
-          // Write secondary DNS server IP address
-          if (env[3] == '4') { opt = netIF_OptionIP4_SecondaryDNS; }
-          else               { opt = netIF_OptionIP6_SecondaryDNS; }
-          break;
-      }
-
-      netIF_GetOption (NET_IF_CLASS_ETH, opt, ip_addr, sizeof(ip_addr));
-      netIP_ntoa (typ, ip_addr, ip_string, sizeof(ip_string));
-      len = (uint32_t)sprintf (buf, &env[5], ip_string);
-      break;
-
+    
     case 'b':
       // LED control from 'led.cgi'
       if (env[2] == 'c') {
@@ -242,80 +193,6 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       }
       id = (uint8_t)(1U << id);
       len = (uint32_t)sprintf (buf, &env[4], (P2 & id) ? "checked" : "");
-      break;
-
-    case 'c':
-      // TCP status from 'tcp.cgi'
-      while ((uint32_t)(len + 150) < buflen) {
-        socket = ++MYBUF(pcgi)->idx;
-        state  = netTCP_GetState (socket);
-
-        if (state == netTCP_StateINVALID) {
-          /* Invalid socket, we are done */
-          return ((uint32_t)len);
-        }
-
-        // 'sprintf' format string is defined here
-        len += (uint32_t)sprintf (buf+len,   "<tr align=\"center\">");
-        if (state <= netTCP_StateCLOSED) {
-          len += (uint32_t)sprintf (buf+len, "<td>%d</td><td>%d</td><td>-</td><td>-</td>"
-                                             "<td>-</td><td>-</td></tr>\r\n",
-                                             socket,
-                                             netTCP_StateCLOSED);
-        }
-        else if (state == netTCP_StateLISTEN) {
-          len += (uint32_t)sprintf (buf+len, "<td>%d</td><td>%d</td><td>%d</td><td>-</td>"
-                                             "<td>-</td><td>-</td></tr>\r\n",
-                                             socket,
-                                             netTCP_StateLISTEN,
-                                             netTCP_GetLocalPort(socket));
-        }
-        else {
-          netTCP_GetPeer (socket, &r_client, sizeof(r_client));
-
-          netIP_ntoa (r_client.addr_type, r_client.addr, ip_string, sizeof (ip_string));
-          
-          len += (uint32_t)sprintf (buf+len, "<td>%d</td><td>%d</td><td>%d</td>"
-                                             "<td>%d</td><td>%s</td><td>%d</td></tr>\r\n",
-                                             socket, netTCP_StateLISTEN, netTCP_GetLocalPort(socket),
-                                             netTCP_GetTimer(socket), ip_string, r_client.port);
-        }
-      }
-      /* More sockets to go, set a repeat flag */
-      len |= (1u << 31);
-      break;
-
-    case 'd':
-      // System password from 'system.cgi'
-      switch (env[2]) {
-        case '1':
-          len = (uint32_t)sprintf (buf, &env[4], netHTTPs_LoginActive() ? "Enabled" : "Disabled");
-          break;
-        case '2':
-          len = (uint32_t)sprintf (buf, &env[4], netHTTPs_GetPassword());
-          break;
-      }
-      break;
-
-    case 'e':
-      // Browser Language from 'language.cgi'
-      lang = netHTTPs_GetLanguage();
-      if      (strncmp (lang, "en", 2) == 0) {
-        lang = "English";
-      }
-      else if (strncmp (lang, "de", 2) == 0) {
-        lang = "German";
-      }
-      else if (strncmp (lang, "fr", 2) == 0) {
-        lang = "French";
-      }
-      else if (strncmp (lang, "sl", 2) == 0) {
-        lang = "Slovene";
-      }
-      else {
-        lang = "Unknown";
-      }
-      len = (uint32_t)sprintf (buf, &env[2], lang, netHTTPs_GetLanguage());
       break;
 
     case 'f':
@@ -352,12 +229,16 @@ uint32_t netCGI_Script (const char *env, char *buf, uint32_t buflen, uint32_t *p
       adv = AD_in (0);
       len = (uint32_t)sprintf (buf, &env[1], adv);
       break;
-
-    case 'y':
-      // Button state from 'button.cgx'
-      //len = (uint32_t)sprintf (buf, "<checkbox><id>button%c</id><on>%s</on></checkbox>",
-       //                        env[1], (get_button () & (1 << (env[1]-'0'))) ? "true" : "false");
-      break;
+		case 'h':
+			switch(env[2]){
+						case '1':
+							len = sprintf (buf, &env[4], fechaRTC);
+						break;
+						case '2':
+							len = sprintf (buf, &env[4], horaRTC);
+						break;
+					}
+		break;
   }
   return (len);
 }

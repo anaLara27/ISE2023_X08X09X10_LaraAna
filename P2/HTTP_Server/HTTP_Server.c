@@ -41,11 +41,11 @@ bool LEDrun;
 /* Thread IDs */
 osThreadId_t TID_Display;
 osThreadId_t TID_Led;
-
+osThreadId_t TID_RTC;
 /* Thread declarations */
 static void BlinkLed (void *arg);
 static void Display  (void *arg);
-
+static void RTC_Alarm  (void *arg);
 __NO_RETURN void app_main (void *arg);
 
 /* Read analog inputs */
@@ -92,17 +92,29 @@ static __NO_RETURN void BlinkLed (void *arg) {
   LEDrun = false;
   while(1) {
     /* Every 100 ms */
-    if (LEDrun == true) {
+    if (LEDrun == true) { 
       LED_SetOut (led_val[cnt]);
       if (++cnt >= sizeof(led_val)) {
         cnt = 0U;
       }
     }
+
 		RTC_CalendarShow();
     osDelay (100);
   }
 }
-
+static __NO_RETURN void RTC_Alarm (void *arg) {
+	(void)arg;
+	while(1){
+		osThreadFlagsWait (0x02, osFlagsWaitAny, osWaitForever);
+			for(int i = 0; i<=5; i++){
+				LED_On(0);
+				osDelay(500);
+				LED_Off(0);
+				osDelay(500);
+			}
+	}
+}
 /*----------------------------------------------------------------------------
   Main Thread 'main': Run Network
  *---------------------------------------------------------------------------*/
@@ -112,7 +124,7 @@ __NO_RETURN void app_main (void *arg) {
 
   TID_Led     = osThreadNew (BlinkLed, NULL, NULL);
   TID_Display = osThreadNew (Display,  NULL, NULL);
-
+  TID_RTC     = osThreadNew (RTC_Alarm, NULL, NULL);
 
 	osThreadExit();
 }

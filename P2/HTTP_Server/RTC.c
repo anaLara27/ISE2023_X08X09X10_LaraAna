@@ -1,10 +1,10 @@
 #include "RTC.h"
-
+#include "cmsis_os2.h" 
 RTC_HandleTypeDef RtcHandle;
 RTC_AlarmTypeDef alarmRTC;
 char fechaRTC[20];
 char horaRTC[20];
-
+extern osThreadId_t TID_RTC;
 void init_RTC(){
 	  /*##-1- Configure the RTC peripheral #######################################*/
   /* Configure RTC prescaler and RTC data registers */
@@ -33,7 +33,7 @@ void init_RTC(){
   }
   
   /* Turn on LED1 */
-  LED_On(0);
+//  LED_On(0);
 
   /*##-2- Check if Data stored in BackUp register1: No Need to reconfigure RTC#*/
   /* Read the Back Up Register 1 Data */
@@ -62,7 +62,7 @@ void init_RTC(){
 		//Configuración de la alarma
 	alarmRTC.AlarmTime.Hours = 0x00;
   alarmRTC.AlarmTime.Minutes = 0x00;
-  alarmRTC.AlarmTime.Seconds = 0x05;
+  alarmRTC.AlarmTime.Seconds = 0x00;
   alarmRTC.AlarmTime.SubSeconds = 0x00;
 	alarmRTC.AlarmTime.TimeFormat = RTC_HOURFORMAT_24;
   alarmRTC.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
@@ -134,16 +134,19 @@ void RTC_CalendarConfig(void)
   */
  void RTC_CalendarShow(void){
 	int i;
+	 
   RTC_DateTypeDef sdatestructureget;
   RTC_TimeTypeDef stimestructureget;
+	 
 	borrarBuffer();
   empezar();
   /* Get the RTC current Time */
   HAL_RTC_GetTime(&RtcHandle, &stimestructureget, RTC_FORMAT_BIN);
   /* Get the RTC current Date */
   HAL_RTC_GetDate(&RtcHandle, &sdatestructureget, RTC_FORMAT_BIN);
+	 
   /* Display time Format : hh:mm:ss */
-  sprintf(horaRTC, "%d:%d:%d", stimestructureget.Hours, stimestructureget.Minutes, stimestructureget.Seconds);
+  sprintf(horaRTC, "%2d:%2d:%2d", stimestructureget.Hours, stimestructureget.Minutes, stimestructureget.Seconds);
   /* Display date Format : mm-dd-yy */
   sprintf(fechaRTC, "%d-%d-%d",sdatestructureget.Date , sdatestructureget.Month, 2000 + sdatestructureget.Year);
 	
@@ -218,9 +221,5 @@ void RTC_Alarm_IRQHandler(void) {
 }
 //callback de la alarma A
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc){
-	for(int i = 0; i<5;i++){
-	  LED_On(0);
-
-		LED_Off(0);
-	}
+	osThreadFlagsSet (TID_RTC, 0x02);
 }
