@@ -115,7 +115,7 @@ int i;
 	init_LCD();
 	borrarBuffer();
   ADC_Initialize();
-	init_RTC();
+	
 	
 	sprintf (lcd_text[0], "HTTP Server");
 //  sprintf (lcd_text[1], "");

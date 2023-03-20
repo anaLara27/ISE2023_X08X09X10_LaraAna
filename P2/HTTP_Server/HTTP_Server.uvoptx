@@ -153,7 +153,72 @@
           <Name>(105=-1,-1,-1,-1,0)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint/>
+      <Breakpoint>
+        <Bp>
+          <Number>0</Number>
+          <Type>0</Type>
+          <LineNumber>35</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134261146</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\RTC.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\HTTP_Server\RTC.c\35</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>256</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134299892</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\RTC.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\HTTP_Server\RTC.c\256</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>260</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134299900</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\RTC.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\HTTP_Server\RTC.c\260</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>263</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134299936</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>.\RTC.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\HTTP_Server\RTC.c\263</Expression>
+        </Bp>
+      </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -174,6 +239,11 @@
           <count>3</count>
           <WinNumber>1</WinNumber>
           <ItemText>val,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>sdatestructure.Year,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <ScvdPack>
@@ -899,14 +969,6 @@
 
   <Group>
     <GroupName>::CMSIS Driver</GroupName>
-    <tvExp>1</tvExp>
-    <tvExpOptDlg>0</tvExpOptDlg>
-    <cbSel>0</cbSel>
-    <RteFlg>1</RteFlg>
-  </Group>
-
-  <Group>
-    <GroupName>::Compiler</GroupName>
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -914,8 +976,16 @@
   </Group>
 
   <Group>
-    <GroupName>::Device</GroupName>
+    <GroupName>::Compiler</GroupName>
     <tvExp>1</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>1</RteFlg>
+  </Group>
+
+  <Group>
+    <GroupName>::Device</GroupName>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>1</RteFlg>

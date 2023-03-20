@@ -1,10 +1,18 @@
 #include "RTC.h"
 #include "cmsis_os2.h" 
+#include "time.h"
+#include "rl_net.h"
+
 RTC_HandleTypeDef RtcHandle;
 RTC_AlarmTypeDef alarmRTC;
 char fechaRTC[20];
 char horaRTC[20];
 extern osThreadId_t TID_RTC;
+int error;
+/****SNTP*****/
+const NET_ADDR4 ntp_server = { NET_ADDR_IP4, 0, 178,255,228,77};
+static void time_callback (uint32_t seconds, uint32_t seconds_fraction);
+
 void init_RTC(){
 	  /*##-1- Configure the RTC peripheral #######################################*/
   /* Configure RTC prescaler and RTC data registers */
@@ -24,7 +32,7 @@ void init_RTC(){
   RtcHandle.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   __HAL_RTC_RESET_HANDLE_STATE(&RtcHandle);
 	HAL_RTC_MspInit(&RtcHandle);
-	
+	get_time();
 
   if (HAL_RTC_Init(&RtcHandle) != HAL_OK)
   {
@@ -222,4 +230,47 @@ void RTC_Alarm_IRQHandler(void) {
 //callback de la alarma A
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc){
 	osThreadFlagsSet (TID_RTC, 0x02);
+}
+
+/*****************SNTP**************************/
+
+ 
+void get_time (void) {
+  if (netSNTPc_GetTime ((NET_ADDR *)&ntp_server, time_callback) == netOK) {
+//    printf ("SNTP request sent.\n");
+		error=0;
+  }
+  else {
+    //printf ("SNTP not ready or bad parameters.\n");
+		error=1;
+  }
+}
+ 
+static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
+  time_t tiempo = seconds;
+  struct tm timeSNTP;
+	RTC_DateTypeDef sdatestructure;
+  RTC_TimeTypeDef stimestructure;
+	if (seconds == 0) {
+    //printf ("Server not responding or bad response.\n");
+		error=1;
+  }
+  else {
+    //printf ("%d seconds elapsed since 1.1.1970\n", seconds);
+		timeSNTP = *localtime(&tiempo);  //timeSNTP apunta a la estructura "tiempo"
+		sdatestructure.Date = timeSNTP.tm_mday;
+		sdatestructure.Month = timeSNTP.tm_mon +1; //mes del año del 0-11
+		sdatestructure.Year = timeSNTP.tm_year+1900;
+		if(HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BCD) != HAL_OK){
+			/* Initialization Error */
+			Error_Handler();
+		}
+		stimestructure.Hours = timeSNTP.tm_hour;
+		stimestructure.Minutes = timeSNTP.tm_min;
+		stimestructure.Seconds = timeSNTP.tm_sec;
+		if (HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BCD) != HAL_OK){
+			/* Initialization Error */
+			Error_Handler();
+		}
+  }
 }

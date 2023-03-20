@@ -121,7 +121,8 @@ static __NO_RETURN void RTC_Alarm (void *arg) {
 __NO_RETURN void app_main (void *arg) {
   (void)arg;
   netInitialize ();
-
+  osDelay(5000);
+	init_RTC();
   TID_Led     = osThreadNew (BlinkLed, NULL, NULL);
   TID_Display = osThreadNew (Display,  NULL, NULL);
   TID_RTC     = osThreadNew (RTC_Alarm, NULL, NULL);
