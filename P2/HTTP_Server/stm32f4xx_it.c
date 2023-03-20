@@ -42,7 +42,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_it.h"
-
+#include "RTC.h"
 #ifdef _RTE_
 #include "RTE_Components.h"             /* Component selection */
 #endif
@@ -59,7 +59,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-
+ TIM_HandleTypeDef timer6;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -170,7 +170,24 @@ void SysTick_Handler(void)
   HAL_IncTick();
 }
 #endif
-
+void TIM6_IRQHandler(void)
+ {
+	 //Aqui llamamos al manejador
+	 HAL_TIM_IRQHandler(&timer6);
+ }
+//CALLBACK.AQUI HAGO LO QUE QUIERA CON EL TIMER
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *TIM_Handler)
+ {
+	 if(TIM_Handler -> Instance == TIM6){
+		 get_time();
+		 for(int i=0;i<4;i++){
+				LED_On(0);
+				HAL_Delay(500);
+				LED_Off(0);
+				HAL_Delay(500);
+		 }
+	 }
+ }
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

@@ -109,9 +109,9 @@ static __NO_RETURN void RTC_Alarm (void *arg) {
 		osThreadFlagsWait (0x02, osFlagsWaitAny, osWaitForever);
 			for(int i = 0; i<=5; i++){
 				LED_On(0);
-				osDelay(500);
+				HAL_Delay(500);
 				LED_Off(0);
-				osDelay(500);
+				HAL_Delay(500);
 			}
 	}
 }

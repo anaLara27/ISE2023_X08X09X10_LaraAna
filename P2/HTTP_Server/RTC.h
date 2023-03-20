@@ -15,4 +15,5 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef *hrtc);
 void RTC_Alarm_IRQHandler(void);
 void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc);
 void get_time (void);
+void initTimer6(void);
 #endif

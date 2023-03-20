@@ -5,12 +5,17 @@
 
 RTC_HandleTypeDef RtcHandle;
 RTC_AlarmTypeDef alarmRTC;
+//RTC_AlarmTypeDef alarmSyncSNTP;
 char fechaRTC[20];
 char horaRTC[20];
 extern osThreadId_t TID_RTC;
-int error;
+int error;//variable para depuración
+
+ // Timer
+extern TIM_HandleTypeDef timer6;
+
 /****SNTP*****/
-const NET_ADDR4 ntp_server = { NET_ADDR_IP4, 0, 178,255,228,77};
+const NET_ADDR4 ntp_server = { NET_ADDR_IP4, 0, 185,179,104,7};
 static void time_callback (uint32_t seconds, uint32_t seconds_fraction);
 
 void init_RTC(){
@@ -39,10 +44,6 @@ void init_RTC(){
     /* Initialization Error */
     Error_Handler();
   }
-  
-  /* Turn on LED1 */
-//  LED_On(0);
-
   /*##-2- Check if Data stored in BackUp register1: No Need to reconfigure RTC#*/
   /* Read the Back Up Register 1 Data */
   if (HAL_RTCEx_BKUPRead(&RtcHandle, RTC_BKP_DR1) != 0x32F2)
@@ -67,7 +68,7 @@ void init_RTC(){
     /* Clear source Reset Flag */
     __HAL_RCC_CLEAR_RESET_FLAGS();
   }
-		//Configuración de la alarma
+		//Configuración de la alarma A
 	alarmRTC.AlarmTime.Hours = 0x00;
   alarmRTC.AlarmTime.Minutes = 0x00;
   alarmRTC.AlarmTime.Seconds = 0x00;
@@ -101,7 +102,7 @@ void RTC_CalendarConfig(void)
   RTC_TimeTypeDef stimestructure;
 
   /*##-1- Configure the Date #################################################*/
-  /* Set Date: Tuesday February 18th 2014 */
+  /* Set Date: 18 - 3 -2023*/
   sdatestructure.Year = 0x23;
   sdatestructure.Month = RTC_MONTH_MARCH;
   sdatestructure.Date = 0x18;
@@ -122,7 +123,7 @@ void RTC_CalendarConfig(void)
   stimestructure.DayLightSaving = RTC_DAYLIGHTSAVING_NONE ;
   stimestructure.StoreOperation = RTC_STOREOPERATION_RESET;
 
-  if (HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BCD) != HAL_OK)
+  if (HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BIN) != HAL_OK)
   {
     /* Initialization Error */
     Error_Handler();
@@ -260,17 +261,26 @@ static void time_callback (uint32_t seconds, uint32_t seconds_fraction) {
 		timeSNTP = *localtime(&tiempo);  //timeSNTP apunta a la estructura "tiempo"
 		sdatestructure.Date = timeSNTP.tm_mday;
 		sdatestructure.Month = timeSNTP.tm_mon +1; //mes del año del 0-11
-		sdatestructure.Year = timeSNTP.tm_year+1900;
-		if(HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BCD) != HAL_OK){
+		sdatestructure.Year = timeSNTP.tm_year-100;
+		if(HAL_RTC_SetDate(&RtcHandle,&sdatestructure,RTC_FORMAT_BIN) != HAL_OK){
 			/* Initialization Error */
 			Error_Handler();
 		}
-		stimestructure.Hours = timeSNTP.tm_hour;
+		stimestructure.Hours = timeSNTP.tm_hour+1;
 		stimestructure.Minutes = timeSNTP.tm_min;
 		stimestructure.Seconds = timeSNTP.tm_sec;
-		if (HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BCD) != HAL_OK){
+		if (HAL_RTC_SetTime(&RtcHandle, &stimestructure, RTC_FORMAT_BIN) != HAL_OK){
 			/* Initialization Error */
 			Error_Handler();
 		}
   }
+}
+void initTimer6(void){
+ // Configurar y arrancar el timer para generar un evento pasados n_microsegundos
+	timer6.Instance = TIM6;
+	timer6.Init.Prescaler = 5999;//Prescaler=84M/6000=14khz
+	timer6.Init.Period = 25219999;//14k/2520000=0.00555Hz=180s=3min
+  __HAL_RCC_TIM6_CLK_ENABLE();
+	HAL_TIM_Base_Init(&timer6);//estas dos lineas sirven para arrancar el timer
+	HAL_TIM_Base_Start(&timer6);
 }
